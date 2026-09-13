@@ -1,0 +1,43 @@
+# DocBrisk API — Cloudflare Worker config
+# Deploy:  npx wrangler deploy
+
+name = "docbrisk-api"
+main = "otp-worker.js"
+compatibility_date = "2024-11-01"
+
+# Created with:  npx wrangler kv namespace create DB
+# Paste the returned id below.
+[[kv_namespaces]]
+binding = "DB"
+id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE"
+
+[vars]
+# Lock this to your real domain before launch. "*" is fine only while testing.
+ALLOWED_ORIGINS = "https://docbrisk.com,https://www.docbrisk.com"
+
+EMAIL_PROVIDER = "resend"        # resend | brevo
+SMS_PROVIDER   = "msg91"         # msg91  | twilio
+
+MAIL_FROM      = "DocBrisk <onboarding@resend.dev>"   # Resend
+MAIL_FROM_ADDR = "no-reply@docbrisk.com"              # Brevo
+MAIL_FROM_NAME = "DocBrisk"
+
+UPI_VPA = "9068446139@ptsbi"
+
+# true  = new accounts must verify their email with an OTP first (recommended)
+# false = skip verification at signup
+REQUIRE_EMAIL_VERIFICATION = "true"
+
+# Leave "false" so you approve each UPI payment yourself after checking your
+# bank statement. Setting "true" grants Pro on any submitted reference, which
+# means anyone can type nonsense and get it — only do that if you genuinely
+# don't mind.
+AUTO_APPROVE_PAYMENTS = "false"
+
+# ---- Secrets: never put these here. Set them with wrangler secret put ----
+#   npx wrangler secret put SESSION_SECRET     (any long random string)
+#   npx wrangler secret put ADMIN_KEY          (any long random string)
+#   npx wrangler secret put RESEND_API_KEY     (or BREVO_API_KEY)
+#   npx wrangler secret put MSG91_AUTHKEY
+#   npx wrangler secret put MSG91_TEMPLATE_ID
+#   npx wrangler secret put TWILIO_SID / TWILIO_TOKEN / TWILIO_FROM
