@@ -1,0 +1,39 @@
+# DocBrisk API — Cloudflare Worker config
+# This file MUST sit in the root of the docbrisk-api GitHub repo,
+# next to otp-worker.js, for GitHub-connected deploys to work.
+
+name = "docbrisk-api"
+main = "otp-worker.js"
+compatibility_date = "2024-11-01"
+
+# After creating your KV namespace (Storage & Databases -> KV -> Create),
+# copy its id and paste it below.
+[[kv_namespaces]]
+binding = "DB"
+id = "c293b5b4a65b4ddc85a9341033f39bdb"
+
+[vars]
+ALLOWED_ORIGINS = "https://docbrisk.com,https://www.docbrisk.com"
+
+EMAIL_PROVIDER = "resend"        # resend | brevo
+SMS_PROVIDER   = "msg91"         # msg91  | twilio
+
+# Sender address. MAIL_FROM is what Resend uses; MAIL_FROM_ADDR/NAME are Brevo's.
+# All three must stay on docbrisk.com, the domain verified in Resend.
+# onboarding@resend.dev is Resend's test sender: it only delivers to the Resend
+# account owner, so it must never be used here.
+MAIL_FROM      = "DocBrisk <no-reply@docbrisk.com>"   # Resend
+MAIL_FROM_ADDR = "no-reply@docbrisk.com"              # Brevo
+MAIL_FROM_NAME = "DocBrisk"
+
+UPI_VPA = "9068446139@ptsbi"
+
+REQUIRE_EMAIL_VERIFICATION = "true"
+AUTO_APPROVE_PAYMENTS = "false"
+
+# ---- Secrets: never put these here. Set them in Cloudflare Dashboard ----
+# Worker -> Settings -> Variables and Secrets -> Add:
+#   SESSION_SECRET      (any long random string)
+#   ADMIN_KEY           (any long random string)
+#   RESEND_API_KEY      (or BREVO_API_KEY)
+#   MSG91_AUTHKEY / MSG91_TEMPLATE_ID   (or TWILIO_SID / TWILIO_TOKEN / TWILIO_FROM)
